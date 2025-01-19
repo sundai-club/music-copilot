@@ -1,4 +1,5 @@
 import os
+import requests
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,6 +13,7 @@ from pydantic import BaseModel
 from langchain.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from typing import List
+from bs4 import BeautifulSoup
 
 load_dotenv()
 
@@ -80,7 +82,7 @@ async def get_documentation():
 async def get_random_idea():
     try:
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a creative music assistant. Generate a random, innovative musical idea."},
                 {"role": "user", "content": "Give me a random musical idea in 2-3 sentences. Be specific and creative."}
@@ -250,7 +252,7 @@ async def generate_brand_guidelines(track_url: str):
         
         # Generate branding guidelines using OpenAI
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a professional brand strategist with expertise in music marketing."},
                 {"role": "user", "content": prompt}
@@ -267,6 +269,89 @@ async def generate_brand_guidelines(track_url: str):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
+def search_genius(track_name, artist_name):
+    """
+    Search for a song on Genius
+    """
+    base_url = "https://api.genius.com"
+    genius_token = os.getenv("GENIUS_TOKEN")
+    headers = {'Authorization': f'Bearer {genius_token}'}
+    search_url = f"{base_url}/search"
+    
+    try:
+        response = requests.get(
+            search_url,
+            params={'q': f"{track_name} {artist_name}"},
+            headers=headers
+        )
+        response.raise_for_status()
+        
+        return response.json()
+    except Exception as e:
+        raise Exception(f"Error searching Genius: {str(e)}")
+
+def extract_lyrics_from_genius(genius_url):
+    """
+    Extract lyrics from Genius webpage
+    """
+    try:
+        # Add headers to mimic browser request
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+        response = requests.get(genius_url, headers=headers)
+        response.raise_for_status()
+        
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Try different possible lyrics containers
+        lyrics_div = soup.find('div', class_='lyrics')
+        if not lyrics_div:
+            lyrics_div = soup.find('div', class_='Lyrics__Container-sc-1ynbvzw-6')
+        if not lyrics_div:
+            # Find all lyric containers if the above methods fail
+            lyrics_divs = soup.find_all('div', {'data-lyrics-container': 'true'})
+            if lyrics_divs:
+                lyrics = '\n'.join([div.get_text() for div in lyrics_divs])
+                return lyrics
+        
+        if lyrics_div:
+            lyrics = lyrics_div.get_text()
+            # Clean up lyrics
+            return '\n'.join(line.strip() for line in lyrics.split('\n') if line.strip())
+        
+        return None
+    except Exception as e:
+        raise Exception(f"Error extracting lyrics: {str(e)}")
+
+
+def get_lyrics(song_name, artist_names):
+    """
+    Main method to get lyrics from Spotify URL
+    """
+    try:
+        
+        # Search for the song on Genius
+        genius_response = search_genius(
+            song_name,
+            artist_names
+        )
+        
+        # Process Genius response
+        if 'response' in genius_response and genius_response['response']['hits']:
+            song_info = genius_response['response']['hits'][0]['result']
+            
+            # Get lyrics from Genius page
+            lyrics = extract_lyrics_from_genius(song_info['url'])
+            
+            return lyrics if lyrics else None
+        
+        return None
+
+    except Exception as e:
+        return None
+
 @app.post("/api/brand-identity")
 async def generate_brand_identity(request: BrandIdentityRequest) -> BrandIdentityResponse:
     try:
@@ -280,6 +365,15 @@ async def generate_brand_identity(request: BrandIdentityRequest) -> BrandIdentit
         artist_names = ", ".join([artist["name"] for artist in track["artists"]])
         song_name = track["name"]
 
+        song_lyrics = request.song_lyrics
+        
+        try:
+            song_lyrics = get_lyrics(song_name, artist_names)
+            print(song_lyrics)
+        except Exception as e:
+            print(e)
+        
+        print(song_lyrics)
         # Read the prompt template
         prompt_template = open("prompt-brand-identity.txt", "r").read()
                 
@@ -293,13 +387,12 @@ async def generate_brand_identity(request: BrandIdentityRequest) -> BrandIdentit
         parser = PydanticOutputParser(pydantic_object=BrandIdentityOutput)
         format_instructions = parser.get_format_instructions()
 
-
         # Add format instructions to the prompt
         prompt_with_format = f"{prompt}\n\nPlease provide your response in the following format:\n{format_instructions}"
                 
         # Generate brand identity using GPT-4
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": prompt_with_format},
                 {"role": "user", "content": "Please generate the brand identity based on the provided information."}
