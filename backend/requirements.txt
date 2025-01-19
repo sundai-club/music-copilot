@@ -6,3 +6,4 @@ python-dotenv
 replicate
 spotipy
 langchain
+bs4

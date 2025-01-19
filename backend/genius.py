@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 
 class LyricsFetcher:
-    def __init__(self, spotify_client_id, spotify_client_secret, genius_access_token):
+    def __init__(self, spotify_client_id=None, spotify_client_secret=None, genius_access_token=None):
         """
         Initialize with both Spotify and Genius credentials
         """
