@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -24,11 +19,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background font-sans antialiased`}>
+    <html lang="en" suppressHydrationWarning className="dark">
+      <body className={`${inter.variable} min-h-screen bg-background font-sans antialiased`}>
         <div className="relative flex min-h-screen flex-col">
+          <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.1),transparent_40%),radial-gradient(circle_at_bottom_left,hsl(var(--secondary)/0.1),transparent_40%)]" />
           <SiteHeader />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 animate-in fade-in duration-500">{children}</main>
         </div>
       </body>
     </html>

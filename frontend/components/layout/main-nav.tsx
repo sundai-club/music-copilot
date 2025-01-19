@@ -2,49 +2,55 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-
+import { Music2 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+
+const routes = [
+  {
+    label: "Artist Setup",
+    href: "/setup",
+  },
+  {
+    label: "Branding",
+    href: "/branding",
+  },
+  {
+    label: "Content",
+    href: "/content",
+  },
+]
 
 export function MainNav() {
   const pathname = usePathname()
 
   return (
-    <div className="flex gap-6 md:gap-10">
-      <Link href="/" className="flex items-center space-x-2">
-        <span className="hidden font-bold sm:inline-block">
-          Music Copilot
-        </span>
-      </Link>
-      <nav className="flex gap-6">
-        <Link
-          href="/setup"
-          className={cn(
-            "transition-colors hover:text-foreground/80",
-            pathname === "/setup" ? "text-foreground" : "text-foreground/60"
-          )}
-        >
-          Artist Setup
+    <div className="flex items-center justify-between w-full">
+      <div className="flex items-center">
+        <Link href="/" className="flex items-center space-x-2 mr-8">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 transition-colors hover:bg-primary/20">
+            <Music2 className="h-5 w-5 text-primary" />
+          </div>
+          <span className="hidden font-bold text-lg sm:inline-block">
+            MusiCopilot
+          </span>
         </Link>
-        <Link
-          href="/branding"
-          className={cn(
-            "transition-colors hover:text-foreground/80",
-            pathname === "/branding" ? "text-foreground" : "text-foreground/60"
-          )}
-        >
-          Branding
-        </Link>
-        <Link
-          href="/content"
-          className={cn(
-            "transition-colors hover:text-foreground/80",
-            pathname === "/content" ? "text-foreground" : "text-foreground/60"
-          )}
-        >
-          Content
-        </Link>
-      </nav>
+        <nav className="flex items-center space-x-8">
+          {routes.map((route) => (
+            <Link
+              key={route.href}
+              href={route.href}
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary relative py-1",
+                pathname === route.href 
+                  ? "text-foreground after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:content-[''] after:scale-x-100 after:transition-transform" 
+                  : "text-muted-foreground after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:content-[''] after:scale-x-0 hover:after:scale-x-100 after:transition-transform"
+              )}
+            >
+              {route.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
     </div>
   )
 } 
