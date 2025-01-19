@@ -34,14 +34,14 @@ Required Outputs:
     * Include demographic (age, lifestyle), psychographic (preferences, habits), and behavioral (music consumption, social media habits) details.
     * Example:
     
-Persona 1: The Party-Goer
-    Age: 22-30 
-    Lifestyle: Young professionals who live for weekend nightlife.
-    Music Preferences: High-energy tracks with reflective lyrics.
-    Social Media Habits: Shares stories/Reels of nights out, follows DJs.
+    Persona 1: The Party-Goer
+        Age: 22-30
+        Lifestyle: Young professionals who live for weekend nightlife.
+        Music Preferences: High-energy tracks with reflective lyrics.
+        Social Media Habits: Shares stories/Reels of nights out, follows DJs.
 
-⁠Persona 2: The Introspective Dreamer
-    Age: 18-24
-    Lifestyle: College students/creatives enjoying reflective late-night music.
-    Music Preferences: Emotional tracks with nostalgic beats.
+    ⁠Persona 2: The Introspective Dreamer
+        Age: 18-24
+        Lifestyle: College students/creatives enjoying reflective late-night music.
+        Music Preferences: Emotional tracks with nostalgic beats.
 
