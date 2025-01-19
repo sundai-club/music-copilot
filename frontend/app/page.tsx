@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -174,7 +173,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-bold">From Unknown to 1M+ Monthly Listeners</h3>
               <p className="text-muted-foreground">
-                "Using the AI branding tools and analytics, I went from 1,000 to over 1 million monthly listeners in just 6 months. The platform showed me exactly who my audience was and how to connect with them."
+                &ldquo;Using the AI branding tools and analytics, I went from 1,000 to over 1 million monthly listeners in just 6 months. The platform showed me exactly who my audience was and how to connect with them.&rdquo;
               </p>
               <div className="flex gap-4 items-center">
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -245,7 +244,7 @@ export default function Home() {
       <div className="container mx-auto px-4 py-16 relative z-10">
         <h2 className="text-3xl font-bold text-center mb-4">Why Artists Choose Us</h2>
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-          Skip years of trial and error. Get everything you need to succeed in today's music industry.
+          Skip years of trial and error. Get everything you need to succeed in today&apos;s music industry.
         </p>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[

@@ -2,20 +2,33 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
 import { useBrandIdentityStore } from "@/lib/store/brand-identity"
 import { useRouter } from "next/navigation"
-import { Loading } from "@/components/ui/loading"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
-import { Music2, Target, Users, MessageSquare, Palette } from "lucide-react"
+import { Music2, Target, Users, MessageSquare } from "lucide-react"
 import { useEffect, useState } from "react"
+
+interface BrandIdentityState {
+  brandIdentity: {
+    brand_identity: {
+      core_song_narrative: string;
+      brand_personality_traits: string[];
+      artist_positioning_statement: string;
+      target_audience_personas: Array<{
+        age: string;
+        lifestyle: string;
+        music_preferences: string;
+        social_media_habits: string;
+      }>;
+    };
+  } | null;
+}
 
 export default function BrandingPage() {
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
-  const brandIdentity = useBrandIdentityStore((state: any) => state.brandIdentity)
+  const brandIdentity = useBrandIdentityStore((state: BrandIdentityState) => state.brandIdentity)
 
   useEffect(() => {
     setMounted(true)

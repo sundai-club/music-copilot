@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { HeaderWrapper } from "@/components/layout/header-wrapper";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
             <HeaderWrapper />
             <main className="flex-1 animate-in fade-in duration-500">{children}</main>
           </div>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

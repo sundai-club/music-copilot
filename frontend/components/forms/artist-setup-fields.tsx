@@ -14,7 +14,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {
-  Form,
   FormControl,
   FormDescription,
   FormField,
@@ -28,7 +27,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { type ArtistSetupFormData, getDescription, getPlaceholder } from "@/lib/validations/artist-setup"
-import { Card } from "@/components/ui/card"
 
 interface ArtistSetupFieldsProps {
   step: number
