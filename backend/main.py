@@ -197,6 +197,41 @@ async def generate_spotify_cover(track_url: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/brand")
+async def generate_brand_guidelines(track_url: str):
+    """
+    Generate branding guidelines based on a Spotify track URL
+    """
+    try:
+        # Extract track ID from URL
+        track_id = track_url.split("/")[-1].split("?")[0]
+        
+        # Get track details using existing function
+        track_details = await get_track_details(track_id)
+        
+        # Prepare prompt for OpenAI
+        prompt = f"""Generate 2-3 concise sentences of branding guidelines for the song '{track_details['name']}' by {track_details['artists'][0]}.
+        Consider the song's genre, mood, and artistic style. Focus on visual and brand identity elements that would resonate with the music."""
+        
+        # Generate branding guidelines using OpenAI
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a professional brand strategist with expertise in music marketing."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=150
+        )
+        
+        return {
+            "track": track_details,
+            "branding_guidelines": response.choices[0].message.content.strip()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
