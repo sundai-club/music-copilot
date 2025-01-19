@@ -366,12 +366,13 @@ async def generate_brand_identity(request: BrandIdentityRequest) -> BrandIdentit
         song_name = track["name"]
 
         song_lyrics = request.song_lyrics
-        
-        try:
-            song_lyrics = get_lyrics(song_name, artist_names)
-            print(song_lyrics)
-        except Exception as e:
-            print(e)
+
+        if not song_lyrics:
+            try:
+                song_lyrics = get_lyrics(song_name, artist_names)
+                print(song_lyrics)
+            except Exception as e:
+                print(e)
         
         print(song_lyrics)
         # Read the prompt template
