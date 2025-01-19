@@ -1,5 +1,6 @@
 fastapi
 uvicorn
 pydantic
-openai>=1.0.0
+openai
 python-dotenv
+replicate
