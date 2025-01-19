@@ -11,7 +11,7 @@ Inputs Provided:
 [[LYRICS START]]
 { song_lyrics }
 [[LYRICS END]]
-4. ⁠Genre Description: {genre_description }
+4. ⁠Genre Description: { genre_description }
 
 Required Outputs:
 
