@@ -4,11 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { artistSetupSchema, type ArtistSetupFormData, formSteps } from "@/lib/validations/artist-setup"
 import { useRouter } from "next/navigation"
 import { getBrandIdentity } from "@/app/api/brand-identity"
+import { useBrandIdentityStore } from "@/lib/store/brand-identity"
+import { BrandIdentityResponse } from "@/types/api"
 
 export function useArtistSetupForm() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
   const totalSteps = formSteps.length
+  const setBrandIdentity = useBrandIdentityStore((state: { setBrandIdentity: (data: BrandIdentityResponse) => void }) => state.setBrandIdentity)
 
   const form = useForm<ArtistSetupFormData>({
     resolver: zodResolver(artistSetupSchema),
@@ -28,14 +31,17 @@ export function useArtistSetupForm() {
   const onSubmit = async (values: ArtistSetupFormData) => {
     try {
       // Call the brand identity API
-      await getBrandIdentity({
+      const response = await getBrandIdentity({
         spotify_url: values.songSpotifyUrl,
         song_lyrics: values.artistBio,
         genre_description: values.primaryGenre,
       })
       
-      // Redirect to branding dashboard
-      router.push("/dashboard/branding")
+      // Store the response
+      setBrandIdentity(response)
+      
+      // Redirect to branding page
+      router.push("/branding")
     } catch (error) {
       console.error("Failed to generate brand identity:", error)
       // Handle error appropriately

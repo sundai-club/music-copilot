@@ -28,7 +28,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { type ArtistSetupFormData, getDescription, getPlaceholder } from "@/lib/validations/artist-setup"
-import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 
 interface ArtistSetupFieldsProps {
