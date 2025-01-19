@@ -1,2 +1,1 @@
-# music-copilot
-AI Manager for Musicians
+# Music Copilot: AI Manager for Musicians
