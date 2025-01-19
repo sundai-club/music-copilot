@@ -1,3 +1,7 @@
+# Deployment
+
+https://music-copilot.onrender.com/api/docs
+
 # Setup
 
 ## Install dependencies:
@@ -9,7 +13,12 @@ pip install -r requirements.txt
 
 # Running the Application
 
-Start the server with:
+## Locally:
+```bash
+python main.py
+```
+
+## Start the server with:
 ```bash
 uvicorn main:app --reload
 ```
