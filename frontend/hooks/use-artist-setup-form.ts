@@ -2,8 +2,11 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { artistSetupSchema, type ArtistSetupFormData, formSteps } from "@/lib/validations/artist-setup"
+import { useRouter } from "next/navigation"
+import { getBrandIdentity } from "@/app/api/brand-identity"
 
 export function useArtistSetupForm() {
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
   const totalSteps = formSteps.length
 
@@ -23,29 +26,19 @@ export function useArtistSetupForm() {
   })
 
   const onSubmit = async (values: ArtistSetupFormData) => {
-    if (currentStep < totalSteps - 1) {
-      const step = formSteps[currentStep]
+    try {
+      // Call the brand identity API
+      await getBrandIdentity({
+        spotify_url: values.songSpotifyUrl,
+        song_lyrics: values.artistBio,
+        genre_description: values.primaryGenre,
+      })
       
-      try {
-        let isValid = false
-        if (step.name === "genres") {
-          isValid = await form.trigger(["primaryGenre", "secondaryGenre"])
-        } else {
-          isValid = await form.trigger(step.name as keyof ArtistSetupFormData)
-        }
-        
-        if (isValid) {
-          setCurrentStep(prev => prev + 1)
-        }
-      } catch (error) {
-        console.error("Validation error:", error)
-      }
-    } else {
-      const isValid = await form.trigger()
-      if (isValid) {
-        console.log("Form submitted:", values)
-        // Add your submission logic here
-      }
+      // Redirect to branding dashboard
+      router.push("/dashboard/branding")
+    } catch (error) {
+      console.error("Failed to generate brand identity:", error)
+      // Handle error appropriately
     }
   }
 

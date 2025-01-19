@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from openai import OpenAI
 import replicate
@@ -15,6 +16,16 @@ from typing import List
 load_dotenv()
 
 app = FastAPI(title="Music Copilot: AI Manager for Musicians")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Initialize Spotify client

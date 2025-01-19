@@ -28,6 +28,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { type ArtistSetupFormData, getDescription, getPlaceholder } from "@/lib/validations/artist-setup"
+import { Badge } from "@/components/ui/badge"
+import { Card } from "@/components/ui/card"
 
 interface ArtistSetupFieldsProps {
   step: number
@@ -60,16 +62,16 @@ export function ArtistSetupFields({ step, form }: ArtistSetupFieldsProps) {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="pop">Pop</SelectItem>
-                <SelectItem value="rock">Rock</SelectItem>
-                <SelectItem value="hiphop">Hip Hop</SelectItem>
-                <SelectItem value="electronic">Electronic</SelectItem>
-                <SelectItem value="rb">R&B</SelectItem>
-                <SelectItem value="jazz">Jazz</SelectItem>
-                <SelectItem value="classical">Classical</SelectItem>
-                <SelectItem value="folk">Folk</SelectItem>
-                <SelectItem value="metal">Metal</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem key="pop" value="pop">Pop</SelectItem>
+                <SelectItem key="rock" value="rock">Rock</SelectItem>
+                <SelectItem key="hiphop" value="hiphop">Hip Hop</SelectItem>
+                <SelectItem key="electronic" value="electronic">Electronic</SelectItem>
+                <SelectItem key="rb" value="rb">R&B</SelectItem>
+                <SelectItem key="jazz" value="jazz">Jazz</SelectItem>
+                <SelectItem key="classical" value="classical">Classical</SelectItem>
+                <SelectItem key="folk" value="folk">Folk</SelectItem>
+                <SelectItem key="metal" value="metal">Metal</SelectItem>
+                <SelectItem key="other" value="other">Other</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage className="mt-2 text-sm" />
@@ -90,16 +92,16 @@ export function ArtistSetupFields({ step, form }: ArtistSetupFieldsProps) {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="pop">Pop</SelectItem>
-                <SelectItem value="rock">Rock</SelectItem>
-                <SelectItem value="hiphop">Hip Hop</SelectItem>
-                <SelectItem value="electronic">Electronic</SelectItem>
-                <SelectItem value="rb">R&B</SelectItem>
-                <SelectItem value="jazz">Jazz</SelectItem>
-                <SelectItem value="classical">Classical</SelectItem>
-                <SelectItem value="folk">Folk</SelectItem>
-                <SelectItem value="metal">Metal</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem key="pop" value="pop">Pop</SelectItem>
+                <SelectItem key="rock" value="rock">Rock</SelectItem>
+                <SelectItem key="hiphop" value="hiphop">Hip Hop</SelectItem>
+                <SelectItem key="electronic" value="electronic">Electronic</SelectItem>
+                <SelectItem key="rb" value="rb">R&B</SelectItem>
+                <SelectItem key="jazz" value="jazz">Jazz</SelectItem>
+                <SelectItem key="classical" value="classical">Classical</SelectItem>
+                <SelectItem key="folk" value="folk">Folk</SelectItem>
+                <SelectItem key="metal" value="metal">Metal</SelectItem>
+                <SelectItem key="other" value="other">Other</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage className="mt-2 text-sm" />
@@ -208,13 +210,13 @@ export function ArtistSetupFields({ step, form }: ArtistSetupFieldsProps) {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              <SelectItem value="minimalist">Minimalist</SelectItem>
-              <SelectItem value="bold">Bold & Vibrant</SelectItem>
-              <SelectItem value="retro">Retro/Vintage</SelectItem>
-              <SelectItem value="modern">Modern & Clean</SelectItem>
-              <SelectItem value="artistic">Artistic & Abstract</SelectItem>
-              <SelectItem value="dark">Dark & Moody</SelectItem>
-              <SelectItem value="natural">Natural & Organic</SelectItem>
+              <SelectItem key="minimalist" value="minimalist">Minimalist</SelectItem>
+              <SelectItem key="bold" value="bold">Bold & Vibrant</SelectItem>
+              <SelectItem key="retro" value="retro">Retro/Vintage</SelectItem>
+              <SelectItem key="modern" value="modern">Modern & Clean</SelectItem>
+              <SelectItem key="artistic" value="artistic">Artistic & Abstract</SelectItem>
+              <SelectItem key="dark" value="dark">Dark & Moody</SelectItem>
+              <SelectItem key="natural" value="natural">Natural & Organic</SelectItem>
             </SelectContent>
           </Select>
           <FormMessage className="mt-2 text-sm" />

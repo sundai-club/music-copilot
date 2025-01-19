@@ -31,7 +31,7 @@ export function MainNav() {
             <Music2 className="h-5 w-5 text-primary" />
           </div>
           <span className="hidden font-bold text-lg sm:inline-block">
-            MusiCopilot
+            AmplfAi
           </span>
         </Link>
         <nav className="flex items-center space-x-8">

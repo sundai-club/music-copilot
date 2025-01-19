@@ -17,7 +17,7 @@ export default function BrandingPage() {
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Your complete brand identity and guidelines, powered by AI insights.
           </p>
-        </div>
+        </div> 
 
         <Tabs defaultValue="analytics" className="space-y-8">
           <div className="flex justify-center w-full">
