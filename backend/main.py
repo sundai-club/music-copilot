@@ -12,7 +12,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 from pydantic import BaseModel
 from langchain.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 from bs4 import BeautifulSoup
 
 load_dotenv()
@@ -51,7 +51,7 @@ except Exception as e:
 
 class BrandIdentityRequest(BaseModel):
     spotify_url: str
-    song_lyrics: str
+    song_lyrics: Optional[str] = None
     genre_description: str
 
 class PersonaModel(BaseModel):
@@ -381,7 +381,7 @@ async def generate_brand_identity(request: BrandIdentityRequest) -> BrandIdentit
         # Format the prompt
         prompt = prompt_template.replace("{ song_name }", song_name)
         prompt = prompt.replace("{ artist_names }", artist_names)
-        prompt = prompt.replace("{ song_lyrics }", request.song_lyrics)
+        prompt = prompt.replace("{ song_lyrics }", song_lyrics)
         prompt = prompt.replace("{ genre_description }", request.genre_description)
 
         # Initialize the Pydantic output parser
