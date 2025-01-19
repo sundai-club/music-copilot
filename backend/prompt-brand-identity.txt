@@ -1,0 +1,47 @@
+You are a branding / marketing / PR expert specializing in the music industry. Based on the provided information about a song, create a comprehensive brand identity that captures the song's emotional core, its connection to listeners, and its place in the music market.
+
+Tone of Output:
+* ⁠Creative, professional, and emotionally resonant.
+* ⁠Ensure outputs align with the given genre and lyrics while maintaining a clear and structured format.
+
+Inputs Provided:
+1. ⁠Song Name: { song_name }
+2. ⁠Artist Names: { artist_names }
+3. Song Lyrics: 
+[[LYRICS START]]
+{ song_lyrics }
+[[LYRICS END]]
+4. ⁠Genre Description: {genre_description }
+
+Required Outputs:
+
+1.⁠ ⁠Core Song Narrative
+    * Write a 2-3 sentence description that communicates the essence of the song.
+    * Describe the theme, emotion, and purpose of the song while aligning it with the artist’s identity.
+    * Example: “Neon Nights” is an electrifying anthem about finding clarity amidst chaos in urban life. The song’s pulsating beats and reflective lyrics evoke a sense of both vulnerability and empowerment, bridging the gap between nightlife energy and personal introspection.
+
+2.⁠ ⁠Artist Positioning Statement
+    * Craft a concise statement about how the artist wants to be perceived in the music industry and by their fans.
+    * Format: For [target audience], [artist] provides [unique offering] through [medium/genre] that [value/impact].
+    * Example: For dreamers navigating the modern world, [Artist Name] creates electrifying synth-pop tracks that combine nostalgia and innovation, offering a unique escape and connection.
+
+3.⁠ ⁠Top 3 Brand Personality Traits
+    * Choose three adjectives that define the song’s “character,” guiding its tone, visuals, and messaging.
+    * Example: Vibrant, Reflective, Bold
+
+4.⁠ ⁠Target Audience Personas
+    * Develop 2-3 detailed listener profiles for the song.
+    * Include demographic (age, lifestyle), psychographic (preferences, habits), and behavioral (music consumption, social media habits) details.
+    * Example:
+    
+Persona 1: The Party-Goer
+    Age: 22-30 
+    Lifestyle: Young professionals who live for weekend nightlife.
+    Music Preferences: High-energy tracks with reflective lyrics.
+    Social Media Habits: Shares stories/Reels of nights out, follows DJs.
+
+⁠Persona 2: The Introspective Dreamer
+    Age: 18-24
+    Lifestyle: College students/creatives enjoying reflective late-night music.
+    Music Preferences: Emotional tracks with nostalgic beats.
+

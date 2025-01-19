@@ -7,6 +7,10 @@ import replicate
 from replicate.helpers import FileOutput
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
+from pydantic import BaseModel
+from langchain.output_parsers import PydanticOutputParser
+from pydantic import BaseModel, Field
+from typing import List
 
 load_dotenv()
 
@@ -32,9 +36,29 @@ except Exception as e:
     print(f"Error initializing Spotify client: {str(e)}")
     raise
 
+class BrandIdentityRequest(BaseModel):
+    spotify_url: str
+    song_lyrics: str
+    genre_description: str
+
+class PersonaModel(BaseModel):
+    age: str = Field(description="Age range of the persona")
+    lifestyle: str = Field(description="Lifestyle description")
+    music_preferences: str = Field(description="Music preferences and habits")
+    social_media_habits: str = Field(description="Social media behavior and patterns")
+
+class BrandIdentityOutput(BaseModel):
+    core_song_narrative: str = Field(description="2-3 sentence description of the song's essence")
+    artist_positioning_statement: str = Field(description="Concise statement about artist positioning")
+    brand_personality_traits: List[str] = Field(description="Top 3 brand personality traits")
+    target_audience_personas: List[PersonaModel] = Field(description="2-3 detailed listener profiles")
+
+class BrandIdentityResponse(BaseModel):
+    brand_identity: BrandIdentityOutput
+
 @app.get("/")
 async def root():
-    return {"message": "Welcome to the Music Copilot API!"}
+    return {"message": "Welcome to the Music Copilot API! Docs: https://music-copilot.onrender.com/api/docs"}
 
 @app.get("/api/docs", include_in_schema=False)
 async def get_documentation():
@@ -231,6 +255,58 @@ async def generate_brand_guidelines(track_url: str):
         
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/brand-identity")
+async def generate_brand_identity(request: BrandIdentityRequest) -> BrandIdentityResponse:
+    try:
+        # Get track details from Spotify URL
+        track_id = request.spotify_url.split("/")[-1].split("?")[0]
+        
+        # Get track details
+        track = spotify.track(track_id)
+        
+        # Create a rich prompt using track information
+        artist_names = ", ".join([artist["name"] for artist in track["artists"]])
+        song_name = track["name"]
+
+        # Read the prompt template
+        prompt_template = open("prompt-brand-identity.txt", "r").read()
+                
+        # Format the prompt
+        prompt = prompt_template.replace("{ song_name }", song_name)
+        prompt = prompt.replace("{ artist_names }", artist_names)
+        prompt = prompt.replace("{ song_lyrics }", request.song_lyrics)
+        prompt = prompt.replace("{ genre_description }", request.genre_description)
+
+        # Initialize the Pydantic output parser
+        parser = PydanticOutputParser(pydantic_object=BrandIdentityOutput)
+        format_instructions = parser.get_format_instructions()
+
+
+        # Add format instructions to the prompt
+        prompt_with_format = f"{prompt}\n\nPlease provide your response in the following format:\n{format_instructions}"
+                
+        # Generate brand identity using GPT-4
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": prompt_with_format},
+                {"role": "user", "content": "Please generate the brand identity based on the provided information."}
+            ],
+            temperature=0.7
+        )
+        
+        # Parse the response into structured format
+        parsed_response = parser.parse(response.choices[0].message.content)
+        
+        # Convert to dictionary for JSON response
+        structured_response = parsed_response.dict()
+        
+        return {"brand_identity": structured_response}
+        
+    except Exception as e:
+        print(str(e))
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
