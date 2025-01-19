@@ -1,6 +1,6 @@
-# Deployment
+# Music Copilot Backend
 
-https://music-copilot.onrender.com/api/docs
+Deployed at: https://music-copilot.onrender.com/api/docs
 
 # Setup
 
@@ -9,6 +9,8 @@ https://music-copilot.onrender.com/api/docs
 virtualenv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env
+# add your API keys to .env
 ```
 
 # Running the Application
@@ -18,7 +20,8 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Start the server with:
+or
+
 ```bash
 uvicorn main:app --reload
 ```
