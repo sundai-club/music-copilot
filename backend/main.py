@@ -51,7 +51,7 @@ except Exception as e:
 
 class BrandIdentityRequest(BaseModel):
     spotify_url: str
-    song_lyrics: Optional[str] = None
+    song_lyrics: Optional[str] = ""
     genre_description: str
 
 class PersonaModel(BaseModel):
