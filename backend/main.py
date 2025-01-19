@@ -69,7 +69,7 @@ async def get_documentation():
 async def get_random_idea():
     try:
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a creative music assistant. Generate a random, innovative musical idea."},
                 {"role": "user", "content": "Give me a random musical idea in 2-3 sentences. Be specific and creative."}
@@ -239,7 +239,7 @@ async def generate_brand_guidelines(track_url: str):
         
         # Generate branding guidelines using OpenAI
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a professional brand strategist with expertise in music marketing."},
                 {"role": "user", "content": prompt}
@@ -282,13 +282,12 @@ async def generate_brand_identity(request: BrandIdentityRequest) -> BrandIdentit
         parser = PydanticOutputParser(pydantic_object=BrandIdentityOutput)
         format_instructions = parser.get_format_instructions()
 
-
         # Add format instructions to the prompt
         prompt_with_format = f"{prompt}\n\nPlease provide your response in the following format:\n{format_instructions}"
                 
         # Generate brand identity using GPT-4
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": prompt_with_format},
                 {"role": "user", "content": "Please generate the brand identity based on the provided information."}
