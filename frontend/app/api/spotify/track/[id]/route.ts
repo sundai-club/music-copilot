@@ -1,13 +1,15 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://music-copilot-n76h.onrender.com"
+
+type RouteParams = { id: string }
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: RouteParams }
 ) {
   try {
-    const trackId = params.id
+    const trackId = context.params.id
     if (!trackId) {
       return NextResponse.json(
         { error: "Track ID is required" },
