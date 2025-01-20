@@ -23,34 +23,30 @@ export function AICoverArt({ spotifyUrl }: AICoverArtProps) {
       try {
         setLoading(true)
         setError(null)
-        
-        const response = await fetch('/api/brand-identity', {
+
+        const response = await fetch('/api/spotify/cover', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            spotify_url: spotifyUrl,
-            song_lyrics: "", // Optional
-            genre_description: "modern" // Default genre description
+            track_url: spotifyUrl
           })
         })
 
         if (!response.ok) {
           throw new Error("Failed to generate cover art")
         }
-        
+
         const data = await response.json()
         console.log('Response data:', data) // Debug log
-        
+
         // Extract the relevant data from the response
         setCoverInfo({
-          cover_image: data.brand_identity.cover_image,
+          cover_image: data.image_url,
           track: {
-            name: data.brand_identity.track.name,
-            artists: Array.isArray(data.brand_identity.track.artists) 
-              ? data.brand_identity.track.artists 
-              : [data.brand_identity.track.artists]
+            name: '-',
+            artists: ['-', '-']
           }
         })
       } catch (err) {
