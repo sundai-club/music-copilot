@@ -28,9 +28,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-# Initialize Spotify client
+# Initialize clients
 spotify_client_id = os.getenv("SPOTIFY_CLIENT_ID")
 spotify_client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 
@@ -48,6 +46,9 @@ try:
 except Exception as e:
     print(f"Error initializing Spotify client: {str(e)}")
     raise
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+replicate_client = replicate.Client(api_token=os.getenv("REPLICATE_API_TOKEN"))
 
 class BrandIdentityRequest(BaseModel):
     spotify_url: str
@@ -81,6 +82,7 @@ class InstagramPost(BaseModel):
     hashtags: List[str] = Field(description="List of relevant hashtags")
     photo_concept: str = Field(description="Description of the photo concept")
     visual_style: str = Field(description="Style guidelines for the photo")
+    image_url: str = Field(description="URL of the generated image")
 
 class InstagramPostResponse(BaseModel):
     post: InstagramPost
@@ -114,7 +116,7 @@ async def get_random_idea():
 async def generate_cover(title: str):
     try:
         # Using Replicate's Flux model to generate album cover
-        output = replicate.run(
+        output = replicate_client.run(
             "black-forest-labs/flux-1.1-pro",
             input={
                 "prompt": f"album cover for song titled '{title}', modern, artistic, high quality",
@@ -223,7 +225,7 @@ async def generate_spotify_cover(track_url: str):
         prompt = f"album cover for '{track['name']}' by {artist_names}, capturing the essence of the song, modern artistic style, high quality"
         
         # Generate cover using Replicate
-        output = replicate.run(
+        output = replicate_client.run(
             "black-forest-labs/flux-1.1-pro",
             input={
                 "prompt": prompt,
@@ -501,12 +503,30 @@ Keep the caption engaging but concise, include emojis naturally, and ensure hash
             elif section.lower().startswith('visual style:'):
                 visual_style = section.replace('Visual Style:', '').strip()
         
+        # Generate image using Replicate's Flux model
+        image_prompt = f"{photo_concept}. {visual_style}. modern, artistic, high quality"
+        output = replicate_client.run(
+            "black-forest-labs/flux-1.1-pro",
+            input={
+                "prompt": image_prompt,
+                "num_inference_steps": 50,
+                "guidance_scale": 7.5,
+                "negative_prompt": "low quality, blurry, distorted, disfigured, bad art, poor lighting",
+                "width": 768,
+                "height": 768,
+            }
+        )
+        
+        # Get the image URL from the output
+        image_url = output.url if isinstance(output, FileOutput) and output else ""
+        
         return InstagramPostResponse(
             post=InstagramPost(
                 caption=caption,
                 hashtags=hashtags,
                 photo_concept=photo_concept,
-                visual_style=visual_style
+                visual_style=visual_style,
+                image_url=image_url
             )
         )
     except Exception as e:
