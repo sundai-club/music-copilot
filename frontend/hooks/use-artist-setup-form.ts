@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation"
 import { getBrandIdentity } from "@/app/api/brand-identity"
 import { useBrandIdentityStore } from "@/lib/store/brand-identity"
 import { BrandIdentityResponse } from "@/types/api"
+import { useToast } from "@/hooks/use-toast"
 
 export function useArtistSetupForm() {
   const router = useRouter()
+  const { toast } = useToast()
   const [currentStep, setCurrentStep] = useState(0)
   const totalSteps = formSteps.length
   const setBrandIdentity = useBrandIdentityStore((state: { setBrandIdentity: (data: BrandIdentityResponse) => void }) => state.setBrandIdentity)
@@ -28,23 +30,36 @@ export function useArtistSetupForm() {
     mode: "onChange",
   })
 
-  const onSubmit = async (values: ArtistSetupFormData) => {
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const values = form.getValues()
+    
     try {
       // Call the brand identity API
       const response = await getBrandIdentity({
-        spotify_url: values.songSpotifyUrl,
-        song_lyrics: values.artistBio,
-        genre_description: values.primaryGenre,
+        spotify_url: values.songSpotifyUrl || "",
+        song_lyrics: values.artistBio || "",
+        genre_description: values.primaryGenre || "",
       })
       
       // Store the response
       setBrandIdentity(response)
       
-      // Redirect to branding page
+      // Show success message
+      toast({
+        title: "Success!",
+        description: "Your brand identity has been generated.",
+      })
+      
+      // Redirect to branding page immediately after response
       router.push("/branding")
     } catch (error) {
       console.error("Failed to generate brand identity:", error)
-      // Handle error appropriately
+      toast({
+        title: "Error",
+        description: "Failed to generate brand identity. Please try again.",
+        variant: "destructive",
+      })
     }
   }
 
@@ -56,15 +71,9 @@ export function useArtistSetupForm() {
 
   const handleNext = async () => {
     const step = formSteps[currentStep]
-    let isValid = false
     
-    if (step.name === "genres") {
-      isValid = await form.trigger(["primaryGenre", "secondaryGenre"])
-    } else {
-      isValid = await form.trigger(step.name as keyof ArtistSetupFormData)
-    }
-
-    if (isValid && currentStep < totalSteps - 1) {
+    // Since fields are optional, we can just proceed
+    if (currentStep < totalSteps - 1) {
       setCurrentStep(prev => prev + 1)
     }
   }
@@ -73,7 +82,7 @@ export function useArtistSetupForm() {
     form,
     currentStep,
     totalSteps,
-    onSubmit: form.handleSubmit(onSubmit),
+    onSubmit,
     handleBack,
     handleNext,
   }

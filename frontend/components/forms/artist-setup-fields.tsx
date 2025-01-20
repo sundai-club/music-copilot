@@ -127,7 +127,7 @@ export function ArtistSetupFields({ step, form }: ArtistSetupFieldsProps) {
                     variant="outline"
                     className="w-full h-14 flex items-center justify-center gap-2 hover:border-primary"
                   >
-                    {field.value[0] ? (
+                    {field.value?.[0] ? (
                       <>
                         <div 
                           className="w-6 h-6 rounded-full border"
@@ -142,9 +142,9 @@ export function ArtistSetupFields({ step, form }: ArtistSetupFieldsProps) {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-3">
                   <HexColorPicker
-                    color={field.value[0] || "#000000"}
+                    color={field.value?.[0] || "#000000"}
                     onChange={(color) => {
-                      const newColors = [...field.value]
+                      const newColors = [...(field.value || [])]
                       newColors[0] = color
                       field.onChange(newColors)
                     }}
@@ -162,7 +162,7 @@ export function ArtistSetupFields({ step, form }: ArtistSetupFieldsProps) {
                     variant="outline"
                     className="w-full h-14 flex items-center justify-center gap-2 hover:border-primary"
                   >
-                    {field.value[1] ? (
+                    {field.value?.[1] ? (
                       <>
                         <div 
                           className="w-6 h-6 rounded-full border"
@@ -177,9 +177,9 @@ export function ArtistSetupFields({ step, form }: ArtistSetupFieldsProps) {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-3">
                   <HexColorPicker
-                    color={field.value[1] || "#000000"}
+                    color={field.value?.[1] || "#000000"}
                     onChange={(color) => {
-                      const newColors = [...field.value]
+                      const newColors = [...(field.value || [])]
                       newColors[1] = color
                       field.onChange(newColors)
                     }}

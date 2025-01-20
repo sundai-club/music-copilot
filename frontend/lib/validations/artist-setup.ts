@@ -1,14 +1,14 @@
 import * as z from "zod"
 
 export const artistSetupSchema = z.object({
-  songSpotifyUrl: z.string().url("Please enter a valid Spotify song URL"),
-  instagramHandle: z.string().min(1, "Instagram handle is required"),
-  primaryGenre: z.string().min(1, "Primary genre is required"),
-  secondaryGenre: z.string().min(1, "Secondary genre is required"),
-  artistBio: z.string().min(50, "Please provide at least 50 characters").max(500, "Bio should not exceed 500 characters"),
-  storyMaterials: z.string().min(1, "Please provide some lyrics or storytelling materials"),
-  visualStyle: z.string().min(1, "Visual style preference is required"),
-  brandColors: z.array(z.string()).min(1, "Please select at least one brand color"),
+  songSpotifyUrl: z.string().url("Please enter a valid Spotify song URL").optional(),
+  instagramHandle: z.string().optional(),
+  primaryGenre: z.string().optional(),
+  secondaryGenre: z.string().optional(),
+  artistBio: z.string().max(500, "Bio should not exceed 500 characters").optional(),
+  storyMaterials: z.string().optional(),
+  visualStyle: z.string().optional(),
+  brandColors: z.array(z.string()).optional(),
 })
 
 export type ArtistSetupFormData = z.infer<typeof artistSetupSchema>
