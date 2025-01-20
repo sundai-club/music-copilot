@@ -90,7 +90,7 @@ export function AICoverArt({ spotifyUrl }: AICoverArtProps) {
             <div className="text-center">
               <h3 className="font-medium text-xl mb-1">{coverInfo.track.name}</h3>
               <p className="text-muted-foreground">
-                by {coverInfo.track.artists.join(", ")}
+                by {coverInfo.track.artists}
               </p>
             </div>
           </div>
