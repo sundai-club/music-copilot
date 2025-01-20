@@ -12,7 +12,7 @@ export function AICoverArt({ spotifyUrl }: AICoverArtProps) {
     cover_image: string
     track: {
       name: string
-      artists: string[]
+      artists: string
     }
   } | null>(null)
   const [loading, setLoading] = useState(true)
@@ -39,8 +39,8 @@ export function AICoverArt({ spotifyUrl }: AICoverArtProps) {
         setCoverInfo({
           cover_image: data.image_url,
           track: {
-            name: '-',
-            artists: ['-', '-']
+            name: data.track.name,
+            artists: data.track.artists
           }
         })
       } catch (err) {
