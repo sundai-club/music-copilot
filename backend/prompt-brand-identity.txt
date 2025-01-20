@@ -6,12 +6,13 @@ Tone of Output:
 
 Inputs Provided:
 1. ⁠Song Name: { song_name }
-2. ⁠Artist Names: { artist_names }
-3. Song Lyrics: 
+2. Album Name: { album_name }
+3. ⁠Artist Names: { artist_names }
+4. Song Lyrics: 
 [[LYRICS START]]
 { song_lyrics }
 [[LYRICS END]]
-4. ⁠Genre Description: { genre_description }
+5. ⁠Genre Description: { genre_description }
 
 Required Outputs:
 

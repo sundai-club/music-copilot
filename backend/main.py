@@ -345,12 +345,12 @@ def get_lyrics(song_name, artist_names):
             # Get lyrics from Genius page
             lyrics = extract_lyrics_from_genius(song_info['url'])
             
-            return lyrics if lyrics else None
+            return lyrics if lyrics else ""
         
-        return None
+        return ""
 
     except Exception as e:
-        return None
+        return ""
 
 @app.post("/api/brand-identity")
 async def generate_brand_identity(request: BrandIdentityRequest) -> BrandIdentityResponse:
@@ -364,6 +364,8 @@ async def generate_brand_identity(request: BrandIdentityRequest) -> BrandIdentit
         # Create a rich prompt using track information
         artist_names = ", ".join([artist["name"] for artist in track["artists"]])
         song_name = track["name"]
+        album_name = track["album"]["name"]
+        print(track)
 
         song_lyrics = request.song_lyrics
 
@@ -379,7 +381,9 @@ async def generate_brand_identity(request: BrandIdentityRequest) -> BrandIdentit
         prompt_template = open("prompt-brand-identity.txt", "r").read()
                 
         # Format the prompt
-        prompt = prompt_template.replace("{ song_name }", song_name)
+        prompt = prompt_template
+        prompt = prompt.replace("{ song_name }", song_name)
+        prompt = prompt.replace("{ album_name }", album_name)
         prompt = prompt.replace("{ artist_names }", artist_names)
         prompt = prompt.replace("{ song_lyrics }", song_lyrics)
         prompt = prompt.replace("{ genre_description }", request.genre_description)
