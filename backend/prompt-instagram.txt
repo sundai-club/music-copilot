@@ -1,0 +1,85 @@
+1. Prompt to Scrape Inspiration for Good Instagram Music Posts
+Objective: Research and identify what makes a successful Instagram post for musicians, using examples of viral posts.
+
+Prompt:
+
+You are an AI content strategist specializing in music branding and social media. Your task is to research online for inspiration on what makes an effective and engaging Instagram post for musicians. Scrape insights about:
+Post Style: What types of photos or visuals (e.g., album covers, behind-the-scenes, lifestyle shots) resonate most with audiences?
+Post Tone: What tone of voice (e.g., casual, mysterious, emotional) works best for music posts?
+Content Length: How long are the captions in successful posts?
+Content Type: Are successful posts predominantly photos, Reels, carousels, or Stories?
+Examples: Highlight 3-5 viral Instagram posts by musicians. Describe their style, tone, and the content they used.
+Provide a structured summary of your findings. Ensure that your recommendations are optimized for music-related Instagram posts.
+2. Prompt to Generate Relevant Instagram Hashtags
+Objective: Generate a list of at least 15 relevant hashtags for Instagram posts based on the song and its brand identity.
+
+Prompt:
+
+You are an expert in social media marketing for musicians. Based on the provided song information and brand identity, generate a list of at least 15 hashtags that maximize reach and relevance.
+Inputs:
+Song Title: [Insert Song Title]
+Artist Name: [Insert Artist Name]
+Target Audience Personas: [Insert Personas]
+Genre Description: [Insert Genre]
+Output:
+A list of 15 hashtags sorted by their reach and relevance (e.g., #NewMusicFriday, #IndiePopVibes, #AcousticSoul).
+Ensure the hashtags include a mix of high-reach (trending), medium-reach (genre-specific), and niche (audience-tailored) options.
+3. Prompt to Generate Instagram Photo Concept
+Objective: Create a concept for a photo that best represents the song based on its brand identity.
+
+Prompt:
+
+You are a music branding AI specializing in social media content. Based on the provided song’s brand identity and target audience, generate a concept for an Instagram photo that visually represents the song.
+Inputs:
+Song Title: [Insert Song Title]
+Artist Name: [Insert Artist Name]
+Brand Personality Traits: [Insert Traits]
+Target Audience Personas: [Insert Personas]
+Brand Archetype: [Insert Archetype]
+Core Brand Narrative: [Insert Narrative]
+Output:
+Describe the photo’s visual elements (e.g., setting, lighting, props, color palette, style).
+Provide enough detail for the musician or a designer to create the image.
+Example Output:
+"A neon-lit urban alleyway at night, with the artist leaning against a brick wall. The lighting is moody, with purple and blue tones reflecting off the rain-soaked ground. The artist wears a reflective jacket that aligns with the song's bold personality traits and futuristic theme."
+4. Prompt to Generate Instagram Caption
+Objective: Create engaging text to accompany the Instagram post or Reel.
+
+Prompt:
+
+You are a social media content creator for musicians. Based on the provided song and its brand identity, generate an Instagram caption that complements the photo concept.
+Inputs:
+Song Title: [Insert Song Title]
+Artist Name: [Insert Artist Name]
+Brand Narrative: [Insert Narrative]
+Target Audience: [Insert Personas]
+Output:
+A caption with 2-3 sentences that engages the audience.
+Include a compelling call-to-action (CTA) to encourage interaction (e.g., “Tap the link in bio to stream now!” or “What’s your favorite lyric from this track?”).
+Integrate 5-7 of the most relevant hashtags from the hashtag list.
+Example Output:
+"‘Neon Nights’ is here, and it’s time to light up your weekend. 🎶 Dive into the electric vibes of this urban anthem and let the music guide you. Tap the link in bio to stream now and tell us your favorite line! 💜✨ #NeonNights #NewMusicFriday #SynthPopLove #WeekendVibes #MusicThatMoves"
+5. Prompt to Generate Two Instagram Post Options
+Objective: Provide two complete options for Instagram posts (photo + caption + hashtags) so the musician can choose.
+
+Prompt:
+
+You are an AI content strategist creating Instagram post options for musicians. Based on the song’s brand identity, provide two post options for the artist to choose from. Each option should include:
+Photo Concept: Describe the visual elements of the photo.
+Caption: Write engaging text with a compelling CTA.
+Hashtags: Include 10-15 relevant hashtags that maximize reach and engagement.
+Inputs:
+Song Title: [Insert Song Title]
+Artist Name: [Insert Artist Name]
+Brand Personality Traits: [Insert Traits]
+Target Audience Personas: [Insert Personas]
+Core Brand Narrative: [Insert Narrative]
+Example Output:
+Option A:
+Photo Concept: A sunset beach with soft, warm lighting, symbolizing the reflective and serene nature of the song. The artist is silhouetted in the distance, creating a mysterious vibe.
+Caption: "Let your thoughts drift with the waves and melodies of ‘Coastal Dreams.’ 🌊✨ Tap the link in bio to stream now. What memory does this song bring to mind?"
+Hashtags: #CoastalDreams #ChillVibesOnly #IndieMusicScene #NewMusicAlert #BeachVibes
+Option B:
+Photo Concept: A bustling city street at night with vibrant neon signs and the artist walking toward the camera, exuding confidence and energy.
+Caption: "Step into the night and feel the pulse of ‘Neon Nights.’ 💜🎶 Link in bio to stream now. What’s your go-to nighttime anthem?"
+Hashtags: #NeonNights #SynthPopLove #CityVibes #WeekendSoundtrack #MusicForTheMoment
