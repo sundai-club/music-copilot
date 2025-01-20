@@ -24,14 +24,8 @@ export function AICoverArt({ spotifyUrl }: AICoverArtProps) {
         setLoading(true)
         setError(null)
 
-        const response = await fetch('https://music-copilot.onrender.com/api/spotify/cover', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            track_url: spotifyUrl
-          })
+        const response = await fetch(`https://music-copilot.onrender.com/api/spotify/cover?track_url=${encodeURIComponent(spotifyUrl)}`, {
+          method: 'GET',
         })
 
         if (!response.ok) {
