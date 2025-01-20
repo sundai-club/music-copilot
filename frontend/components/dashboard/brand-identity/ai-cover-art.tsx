@@ -8,49 +8,61 @@ interface AICoverArtProps {
 }
 
 export function AICoverArt({ spotifyUrl }: AICoverArtProps) {
-  const [trackInfo, setTrackInfo] = useState<{
-    name: string
-    artists: string[]
-    album: string
-    image_url: string
+  const [coverInfo, setCoverInfo] = useState<{
+    cover_image: string
+    track: {
+      name: string
+      artists: string[]
+    }
   } | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchTrackInfo = async () => {
+    const fetchCoverArt = async () => {
       try {
         setLoading(true)
         setError(null)
         
-        // Extract track ID from URL
-        const trackId = spotifyUrl.split('/track/')[1]?.split('?')[0]
-        if (!trackId) {
-          throw new Error("Invalid Spotify URL")
-        }
+        const response = await fetch('/api/brand-identity', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            spotify_url: spotifyUrl,
+            song_lyrics: "", // Optional
+            genre_description: "modern" // Default genre description
+          })
+        })
 
-        const response = await fetch(`/api/spotify/track/${trackId}`)
         if (!response.ok) {
-          throw new Error("Failed to fetch track details")
+          throw new Error("Failed to generate cover art")
         }
         
         const data = await response.json()
-        setTrackInfo({
-          name: data.name,
-          artists: data.artists,
-          album: data.album,
-          image_url: data.image_url
+        console.log('Response data:', data) // Debug log
+        
+        // Extract the relevant data from the response
+        setCoverInfo({
+          cover_image: data.brand_identity.cover_image,
+          track: {
+            name: data.brand_identity.track.name,
+            artists: Array.isArray(data.brand_identity.track.artists) 
+              ? data.brand_identity.track.artists 
+              : [data.brand_identity.track.artists]
+          }
         })
       } catch (err) {
-        console.error("Error fetching track info:", err)
-        setError(err instanceof Error ? err.message : "Failed to fetch track details")
+        console.error("Error generating cover art:", err)
+        setError(err instanceof Error ? err.message : "Failed to generate cover art")
       } finally {
         setLoading(false)
       }
     }
 
     if (spotifyUrl) {
-      fetchTrackInfo()
+      fetchCoverArt()
     }
   }, [spotifyUrl])
 
@@ -62,9 +74,9 @@ export function AICoverArt({ spotifyUrl }: AICoverArtProps) {
     <Card className="backdrop-blur bg-card/50 border-muted overflow-hidden">
       <CardHeader className="border-b bg-muted/30">
         <CardTitle className="flex items-center gap-2">
-          Track Cover Art
+          AI Generated Cover Art
         </CardTitle>
-        <CardDescription>Original artwork from Spotify</CardDescription>
+        <CardDescription>Unique artwork generated for your track</CardDescription>
       </CardHeader>
       <CardContent className="p-6">
         {loading ? (
@@ -75,20 +87,20 @@ export function AICoverArt({ spotifyUrl }: AICoverArtProps) {
           <div className="flex items-center justify-center h-[300px] text-muted-foreground">
             {error}
           </div>
-        ) : trackInfo ? (
+        ) : coverInfo ? (
           <div className="flex flex-col items-center gap-6">
             <div className="aspect-square relative w-full max-w-[300px] overflow-hidden rounded-lg">
               <Image
-                src={trackInfo.image_url}
-                alt={`Cover art for ${trackInfo.name}`}
+                src={coverInfo.cover_image}
+                alt={`AI-generated cover art for ${coverInfo.track.name}`}
                 fill
                 className="object-cover"
               />
             </div>
             <div className="text-center">
-              <h3 className="font-medium text-xl mb-1">{trackInfo.name}</h3>
+              <h3 className="font-medium text-xl mb-1">{coverInfo.track.name}</h3>
               <p className="text-muted-foreground">
-                by {trackInfo.artists.join(", ")} • {trackInfo.album}
+                by {coverInfo.track.artists.join(", ")}
               </p>
             </div>
           </div>

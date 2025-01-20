@@ -237,7 +237,7 @@ async def generate_spotify_cover(track_url: str):
 @app.get("/api/brand")
 async def generate_brand_guidelines(track_url: str):
     """
-    Generate branding guidelines based on a Spotify track URL
+    Generate branding guidelines and AI cover art based on a Spotify track URL
     """
     try:
         # Extract track ID from URL
@@ -245,6 +245,9 @@ async def generate_brand_guidelines(track_url: str):
         
         # Get track details using existing function
         track_details = await get_track_details(track_id)
+        
+        # Generate AI cover art
+        cover_response = await generate_cover(track_details['name'])
         
         # Prepare prompt for OpenAI
         prompt = f"""Generate 2-3 concise sentences of branding guidelines for the song '{track_details['name']}' by {track_details['artists'][0]}.
@@ -261,9 +264,19 @@ async def generate_brand_guidelines(track_url: str):
             max_tokens=150
         )
         
+        # Create a simplified track details object without Spotify cover
+        simplified_track = {
+            'id': track_details['id'],
+            'name': track_details['name'],
+            'artists': track_details['artists'],
+            'album': track_details['album'],
+            'external_url': track_details['external_url']
+        }
+        
         return {
-            "track": track_details,
-            "branding_guidelines": response.choices[0].message.content.strip()
+            "track": simplified_track,
+            "branding_guidelines": response.choices[0].message.content.strip(),
+            "cover_image": cover_response["image_url"]
         }
         
     except Exception as e:
