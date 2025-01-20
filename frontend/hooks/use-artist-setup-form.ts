@@ -8,12 +8,43 @@ import { useBrandIdentityStore } from "@/lib/store/brand-identity"
 import { BrandIdentityResponse } from "@/types/api"
 import { useToast } from "@/hooks/use-toast"
 
+// Helper function to normalize Spotify URL
+function normalizeSpotifyUrl(url: string): string {
+  try {
+    // Handle Spotify URI format (spotify:track:id)
+    if (url.startsWith('spotify:track:')) {
+      const id = url.split(':')[2]
+      return `https://open.spotify.com/track/${id}`
+    }
+    
+    // Handle short URL format
+    if (url.includes('spotify.link')) {
+      // We'll need to use the full URL as short URLs need to be expanded
+      return url
+    }
+    
+    // Handle normal URL format
+    if (url.includes('spotify.com')) {
+      const trackId = url.split('/track/')[1]?.split('?')[0]
+      if (trackId) {
+        return `https://open.spotify.com/track/${trackId}`
+      }
+    }
+    
+    return url
+  } catch (error) {
+    console.error('Error normalizing Spotify URL:', error)
+    return url
+  }
+}
+
 export function useArtistSetupForm() {
   const router = useRouter()
   const { toast } = useToast()
   const [currentStep, setCurrentStep] = useState(0)
   const totalSteps = formSteps.length
   const setBrandIdentity = useBrandIdentityStore((state: { setBrandIdentity: (data: BrandIdentityResponse) => void }) => state.setBrandIdentity)
+  const setSpotifyUrl = useBrandIdentityStore((state: { setSpotifyUrl: (url: string) => void }) => state.setSpotifyUrl)
 
   const form = useForm<ArtistSetupFormData>({
     resolver: zodResolver(artistSetupSchema),
@@ -35,24 +66,43 @@ export function useArtistSetupForm() {
     const values = form.getValues()
     
     try {
-      // Call the brand identity API
-      const response = await getBrandIdentity({
-        spotify_url: values.songSpotifyUrl || "",
-        song_lyrics: values.artistBio || "",
-        genre_description: values.primaryGenre || "",
-      })
+      // Debug log before setting Spotify URL
+      console.log("Form values:", values)
       
-      // Store the response
-      setBrandIdentity(response)
-      
-      // Show success message
-      toast({
-        title: "Success!",
-        description: "Your brand identity has been generated.",
-      })
-      
-      // Redirect to branding page immediately after response
-      router.push("/branding")
+      if (values.songSpotifyUrl) {
+        // Normalize the Spotify URL
+        const normalizedUrl = normalizeSpotifyUrl(values.songSpotifyUrl)
+        console.log("Normalized Spotify URL:", normalizedUrl)
+        
+        // Store the normalized URL
+        setSpotifyUrl(normalizedUrl)
+        console.log("Spotify URL set in store:", normalizedUrl)
+
+        // Call the brand identity API with normalized URL
+        const response = await getBrandIdentity({
+          spotify_url: normalizedUrl,
+          song_lyrics: values.artistBio || "",
+          genre_description: values.primaryGenre || "",
+        })
+        
+        // Store the response
+        setBrandIdentity(response)
+        
+        // Show success message
+        toast({
+          title: "Success!",
+          description: "Your brand identity has been generated.",
+        })
+        
+        // Redirect to branding page immediately after response
+        router.push("/branding")
+      } else {
+        toast({
+          title: "Error",
+          description: "Please provide a valid Spotify track URL.",
+          variant: "destructive",
+        })
+      }
     } catch (error) {
       console.error("Failed to generate brand identity:", error)
       toast({

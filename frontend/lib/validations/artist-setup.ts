@@ -1,7 +1,34 @@
 import * as z from "zod"
 
+const spotifyUrlSchema = z.string().refine(
+  (url) => {
+    // Accept empty string as the field is optional
+    if (!url) return true
+    
+    // Handle Spotify URI format
+    if (url.startsWith('spotify:track:')) {
+      return true
+    }
+    
+    // Handle short URL format
+    if (url.includes('spotify.link')) {
+      return true
+    }
+    
+    // Handle normal URL format
+    if (url.includes('spotify.com/track/')) {
+      return true
+    }
+    
+    return false
+  },
+  {
+    message: "Please enter a valid Spotify track URL (e.g., https://open.spotify.com/track/...)",
+  }
+)
+
 export const artistSetupSchema = z.object({
-  songSpotifyUrl: z.string().url("Please enter a valid Spotify song URL").optional(),
+  songSpotifyUrl: spotifyUrlSchema.optional(),
   instagramHandle: z.string().optional(),
   primaryGenre: z.string().optional(),
   secondaryGenre: z.string().optional(),
@@ -44,7 +71,7 @@ export const getPlaceholder = (fieldName: string) => {
 export const getDescription = (fieldName: string) => {
   switch (fieldName) {
     case "songSpotifyUrl":
-      return "Your Spotify song URL"
+      return "Your Spotify song URL (e.g., https://open.spotify.com/track/...)"
     case "instagramHandle":
       return "Your Instagram username without the @ symbol"
     case "brandColors":

@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Music2, Target, Users, MessageSquare } from "lucide-react"
 import { useEffect, useState } from "react"
+import { AICoverArt } from "@/components/dashboard/brand-identity/ai-cover-art"
 
 interface BrandIdentityState {
   brandIdentity: {
@@ -23,16 +24,20 @@ interface BrandIdentityState {
       }>;
     };
   } | null;
+  spotify_url: string | null;
 }
 
 export default function BrandingPage() {
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
   const brandIdentity = useBrandIdentityStore((state: BrandIdentityState) => state.brandIdentity)
+  const spotifyUrl = useBrandIdentityStore((state: BrandIdentityState) => state.spotify_url)
 
   useEffect(() => {
     setMounted(true)
-  }, [])
+    // Debug log
+    console.log("Spotify URL from store:", spotifyUrl)
+  }, [spotifyUrl])
 
   // Prevent hydration mismatch by not rendering until client-side
   if (!mounted) {
@@ -97,6 +102,18 @@ export default function BrandingPage() {
 
           {/* Brand Identity Tab */}
           <TabsContent value="identity" className="space-y-8 mx-auto max-w-6xl">
+            {spotifyUrl ? (
+              <AICoverArt spotifyUrl={spotifyUrl} />
+            ) : (
+              <Card className="backdrop-blur bg-card/50 border-muted overflow-hidden">
+                <CardContent className="p-6">
+                  <p className="text-muted-foreground text-center">
+                    No Spotify URL found. The AI cover art generation requires a valid Spotify track URL.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
             <Card className="backdrop-blur bg-card/50 border-muted overflow-hidden">
               <CardHeader className="border-b bg-muted/30">
                 <CardTitle className="flex items-center gap-2 text-2xl">
