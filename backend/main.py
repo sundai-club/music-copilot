@@ -28,9 +28,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-# Initialize Spotify client
+# Initialize clients
 spotify_client_id = os.getenv("SPOTIFY_CLIENT_ID")
 spotify_client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 
@@ -48,6 +46,9 @@ try:
 except Exception as e:
     print(f"Error initializing Spotify client: {str(e)}")
     raise
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+replicate_client = replicate.Client(api_token=os.getenv("REPLICATE_API_TOKEN"))
 
 class BrandIdentityRequest(BaseModel):
     spotify_url: str
@@ -68,6 +69,23 @@ class BrandIdentityOutput(BaseModel):
 
 class BrandIdentityResponse(BaseModel):
     brand_identity: BrandIdentityOutput
+
+class InstagramPostRequest(BaseModel):
+    track_url: str
+    style_preference: Optional[str] = Field(
+        default="modern",
+        description="Style preference for the post (e.g., modern, vintage, minimalist)"
+    )
+
+class InstagramPost(BaseModel):
+    caption: str = Field(description="Engaging caption for the Instagram post")
+    hashtags: List[str] = Field(description="List of relevant hashtags")
+    photo_concept: str = Field(description="Description of the photo concept")
+    visual_style: str = Field(description="Style guidelines for the photo")
+    image_url: str = Field(description="URL of the generated image")
+
+class InstagramPostResponse(BaseModel):
+    post: InstagramPost
 
 @app.get("/")
 async def root():
@@ -98,7 +116,7 @@ async def get_random_idea():
 async def generate_cover(title: str):
     try:
         # Using Replicate's Flux model to generate album cover
-        output = replicate.run(
+        output = replicate_client.run(
             "black-forest-labs/flux-1.1-pro",
             input={
                 "prompt": f"album cover for song titled '{title}', modern, artistic, high quality",
@@ -207,7 +225,7 @@ async def generate_spotify_cover(track_url: str):
         prompt = f"album cover for '{track['name']}' by {artist_names}, capturing the essence of the song, modern artistic style, high quality"
         
         # Generate cover using Replicate
-        output = replicate.run(
+        output = replicate_client.run(
             "black-forest-labs/flux-1.1-pro",
             input={
                 "prompt": prompt,
@@ -359,7 +377,7 @@ def get_lyrics(song_name, artist_names):
             lyrics = extract_lyrics_from_genius(song_info['url'])
             
             return lyrics if lyrics else ""
-        
+
         return ""
 
     except Exception as e:
@@ -421,13 +439,110 @@ async def generate_brand_identity(request: BrandIdentityRequest) -> BrandIdentit
         # Parse the response into structured format
         parsed_response = parser.parse(response.choices[0].message.content)
         
-        # Convert to dictionary for JSON response
-        structured_response = parsed_response.dict()
-        
-        return {"brand_identity": structured_response}
+        # Return proper BrandIdentityResponse object
+        return BrandIdentityResponse(brand_identity=parsed_response)
         
     except Exception as e:
         print(str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/instagram-post", response_model=InstagramPostResponse)
+async def generate_instagram_post(request: InstagramPostRequest):
+    """
+    Generate an Instagram post concept based on a Spotify track
+    """
+    try:
+        # Get track ID from URL
+        track_id = request.track_url.split('/')[-1].split('?')[0]
+        
+        # Get track details directly from Spotify
+        track = spotify.track(track_id)
+        
+        # Get track genre from Spotify artist data
+        artist_id = track['artists'][0]['id']
+        artist = spotify.artist(artist_id)
+        genre_description = ", ".join(artist['genres']) if artist['genres'] else "contemporary"
+        
+        # Generate brand identity for context
+        brand_identity_response = await generate_brand_identity(BrandIdentityRequest(
+            spotify_url=request.track_url,
+            genre_description=genre_description
+        ))
+        
+        # Create prompt for Instagram post generation
+        prompt = f"""Create an engaging Instagram post for this song:
+        
+Song: {track['name']}
+Artist: {track['artists'][0]['name']}
+Brand Identity: {brand_identity_response.brand_identity.core_song_narrative}
+Style Preference: {request.style_preference}
+
+Generate:
+1. An attention-grabbing caption that reflects the song's essence
+2. A list of 15 relevant hashtags
+3. A creative photo concept that aligns with the song's mood
+4. Visual style guidelines for the photo
+
+Keep the caption engaging but concise, include emojis naturally, and ensure hashtags are trending and relevant."""
+
+        # Generate Instagram post content using OpenAI
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are an expert social media manager specializing in music promotion."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7
+        )
+        
+        # Parse the response
+        content = response.choices[0].message.content
+        
+        # Extract different components using simple parsing
+        sections = content.split('\n\n')
+        caption = ""
+        hashtags = []
+        photo_concept = ""
+        visual_style = ""
+        
+        for section in sections:
+            if section.lower().startswith('caption:'):
+                caption = section.replace('Caption:', '').strip()
+            elif section.lower().startswith('hashtags:'):
+                hashtags_text = section.replace('Hashtags:', '').strip()
+                hashtags = [tag.strip() for tag in hashtags_text.split('#') if tag.strip()]
+            elif section.lower().startswith('photo concept:'):
+                photo_concept = section.replace('Photo Concept:', '').strip()
+            elif section.lower().startswith('visual style:'):
+                visual_style = section.replace('Visual Style:', '').strip()
+        
+        # Generate image using Replicate's Flux model
+        image_prompt = f"{photo_concept}. {visual_style}. modern, artistic, high quality"
+        output = replicate_client.run(
+            "black-forest-labs/flux-1.1-pro",
+            input={
+                "prompt": image_prompt,
+                "num_inference_steps": 50,
+                "guidance_scale": 7.5,
+                "negative_prompt": "low quality, blurry, distorted, disfigured, bad art, poor lighting",
+                "width": 768,
+                "height": 768,
+            }
+        )
+        
+        # Get the image URL from the output
+        image_url = output.url if isinstance(output, FileOutput) and output else ""
+        
+        return InstagramPostResponse(
+            post=InstagramPost(
+                caption=caption,
+                hashtags=hashtags,
+                photo_concept=photo_concept,
+                visual_style=visual_style,
+                image_url=image_url
+            )
+        )
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
